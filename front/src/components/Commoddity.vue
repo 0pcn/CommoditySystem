@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h4>商品列表</h4>
+    <h4>商品清單</h4>
     <el-table :data="productList"
               style="width: 100%"
               v-show="productList.length"
@@ -100,6 +100,7 @@ export default {
           a += this.list[i].price * this.list[i].num
         }
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.count = a
       return this.count
     }
