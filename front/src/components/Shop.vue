@@ -6,7 +6,7 @@
           <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image">
           <div class="proInfo">
             <div class="proName">{{product.name}}</div>
-            <div class="proPrice">NT${{product.price}}</div>
+            <div class="proPrice">NT$ {{product.price}}</div>
           </div>
           <div class="addcart" >
             <button class="addcartBtn">加入購物車</button>
@@ -56,6 +56,7 @@ export default {
           num: 1,
           remove: false
         }
+
       ]
     }
   }
@@ -66,16 +67,16 @@ export default {
 .proCard {
   display: inline-flex;
   flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-content: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
 }
 .image {
   width: 100%;
   display: block;
 }
 .el-card {
-  margin: 10px 20px;
+  margin: 10px 10px 10px 20px;
 }
 .proInfo {
   display: inline-flex;
@@ -90,12 +91,13 @@ export default {
 }
 .proName {
 
-  width: 150px;
+  width: 130px;
   height: 50px;
 }
 .proPrice {
-  border-left: solid 1px #e1f5fe;
+  border-left: solid 1px #C8DCDE;
   width: 100px;
+  padding-left: 10px;
 }
 .addcart {
   height: 60px;
@@ -107,14 +109,14 @@ export default {
   cursor: pointer;
   font-size: 18px;
   font-weight: bolder;
-  background-color: #e1f5fe;
+  background-color: #DEF5F7;
   color: #2c3e50;
   border-style: none;
   letter-spacing: 3px;
 }
 
 .addcartBtn:hover {
-  background-color: #afc2cb;
+  background-color: #C8DCDE;
 }
 
 </style>

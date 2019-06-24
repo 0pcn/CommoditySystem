@@ -13,7 +13,7 @@
           </el-menu-item>
           <el-menu-item index="/Commodity" class="el-menu-item">
             <i class="el-icon-shopping-bag-2 el-icon"></i>
-            <span slot="title">商品清單</span>
+            <span slot="title">購物車</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
