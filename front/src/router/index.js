@@ -23,7 +23,7 @@ export default new Router({
           path: '/Shop',
           name: '商品頁',
           component: Shop
-        }
+        },
       ]
     },
     {

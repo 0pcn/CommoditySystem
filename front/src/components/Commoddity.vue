@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <el-card>
-      <h4>商品清單</h4>
+      <h4>購物車商品清單</h4>
       <el-table :data="list" style="width: 100%;" v-show="list.length">
         <el-table-column label="复选框" width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-checkbox v-model="scope.row.checked" ></el-checkbox>
           </template>
         </el-table-column>
@@ -13,17 +13,17 @@
         <el-table-column prop="price" label="單價" width="180">
         </el-table-column>
         <el-table-column label="數量" width="380">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-input-number v-model="scope.row.num" :min="1" :max="scope.row.number"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="總計">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div>{{scope.row.price*scope.row.num}}</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="danger" @click="centerDialogVisible = true">删除</el-button>
             <el-dialog
               title="提示"
