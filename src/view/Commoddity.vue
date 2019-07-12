@@ -8,9 +8,9 @@
 				type="warning"
 				show-icon>
 			</el-alert>
-			<h4 v-if="list.length!==0">購物車商品清單</h4>
+			<h4 v-show="list.length">購物車商品清單</h4>
 			<el-table :data=" list " style="width: 100%;" v-show="list.length">
-				<el-table-column label="复选框" width="100">
+				<el-table-column label="選擇" width="100">
 					<template slot-scope="scope">
 						<el-checkbox v-model="scope.row.checked"></el-checkbox>
 					</template>
@@ -42,7 +42,7 @@
 							center>
 							<span>確定要移除這個商品嗎？</span>
 							<span slot="footer" class="dialog-footer">
-            <el-button @click="centerDialogVisible = false" :check="istrue">取 消</el-button>
+            <el-button @click="centerDialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="removeId(scope.row)">確 定</el-button>
           </span>
 						</el-dialog>
@@ -72,7 +72,7 @@
 	</div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
 	data () {
@@ -81,7 +81,7 @@ export default {
 			count: 0,
 			checked: false,
 			centerDialogVisible: false,
-			dialogTableVisible: false,
+			dialogTableVisible: false
 		}
 	},
 	computed: {
@@ -95,9 +95,8 @@ export default {
 			this.count = totalMoney
 			return this.count
 		},
-		...mapGetters({
-			list: 'basket'
-		})
+		...mapState({list: 'basket'}),
+		...mapGetters({list: 'basket'})
 	},
 	methods: {
 		removeId (index) {
