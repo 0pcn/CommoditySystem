@@ -3,20 +3,44 @@
 		<div class="searchWord">
 			<div style="display: inline-block"> 搜索：</div>
 			<el-input v-model="search"
-			          placeholder="请输入搜索内容">
+			          placeholder="請輸入搜索内容">
 			</el-input>
+			{{productList}}
 		</div>
 		<div class="dormitoryData">
 			<el-table
 				ref="dormitoryTable"
-				:data="tables"
+				:data="productList"
 				tooltip-effect="dark"
 				stripe
 				style="width: 100%">
 				<el-table-column type="selection" width="45"></el-table-column>
 				<el-table-column label="序号" type="index" width="65"></el-table-column>
-				<el-table-column label="商品名稱" prop="name">
+				<el-table-column label="訂單ID" prop="id"></el-table-column>
+				<el-table-column label="使用者" prop="user_id">
 				</el-table-column>
+				<el-table-column label="狀態" prop="status">
+				</el-table-column>
+				<el-table-column label="金額" prop="total_amount">
+				</el-table-column>
+				<el-table-column
+					label="操作">
+					<template slot-scope="scope">
+						<el-button
+							size="mini"
+							@click="getDetail(scope.row)">Detail
+						</el-button>
+						<el-dialog title="訂單明細" :visible.sync="dialogTableVisible">
+							<el-table :data="detailData">
+								<el-table-column property="product_name" label="商品名稱"></el-table-column>
+								<el-table-column property="price" label="價錢" width="150"></el-table-column>
+								<el-table-column property="quantity" label="數量"></el-table-column>
+								<el-table-column property="total_amount" label="總金額"></el-table-column>
+							</el-table>
+						</el-dialog>
+					</template>
+				</el-table-column>
+				<!--</el-table-column>
 				<el-table-column label="單價">
 					<template slot-scope="scope">
 						<div>$ {{scope.row.price}}</div>
@@ -28,106 +52,23 @@
 					<template slot-scope="scope">
 						<div>$ {{scope.row.price*scope.row.num}}</div>
 					</template>
-				</el-table-column>
+				</el-table-column>-->
 			</el-table>
 		</div>
 	</div>
 </template>
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 export default {
 	data () {
 		return {
-			/*dormitory: [{
-				people: '雷森',
-				relationship: '大学室友',
-				meet: '2010-09-02',
-				place: '图书馆',
-				execg: '胖子',
-				year: '8年',
-				works: '海阔天空'
-			}, {
-				people: '刘利伟',
-				relationship: '大学室友',
-				meet: '2010-09-02',
-				place: '5#633',
-				execg: '老大',
-				year: '8年',
-				works: '勇气'
-			}, {
-				people: '李金龙',
-				relationship: '大学室友',
-				meet: '2010-09-02',
-				place: '5#633',
-				execg: '二哥',
-				year: '8年',
-				works: '遇见'
-			}, {
-				people: '马康',
-				relationship: '大学室友',
-				meet: '2010-09-02',
-				place: '餐饮大厦',
-				execg: '康哥',
-				year: '8年',
-				works: '不再联系'
-			}, {
-				people: '牛光卫',
-				relationship: '大学室友',
-				meet: '2010-09-02',
-				place: '图书馆',
-				execg: '牛牛娃',
-				year: '8年',
-				works: '断点'
-			}, {
-				people: '陆兆攀',
-				relationship: '大学室友',
-				meet: '1991-07-27',
-				place: '百浪',
-				execg: '帅哥',
-				year: '27年',
-				works: '不再犹豫'
-			}, {
-				people: '小甜',
-				relationship: '亲密的人',
-				meet: '2016-10-05',
-				place: '小寨',
-				execg: '甜甜圈',
-				year: '2年',
-				works: 'Forever Love'
-			}],*/
-			productList: [
-				{
-					id: 1,
-					name: '皮夾',
-					price: 400,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 2,
-					name: '手環',
-					price: 200,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 3,
-					name: '戒指',
-					price: 800,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 4,
-					name: '鞋子',
-					price: 100,
-					num: 1,
-					addNums: 0
-				}
-			],
 			search: ''
 		}
 	},
 	computed: {
+		...mapState({productList: 'buyList'}),
+		...mapGetters({productList: 'buyList'}),
 		// 模糊搜索
 		tables () {
 			const search = this.search

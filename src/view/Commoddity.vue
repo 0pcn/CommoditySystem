@@ -57,14 +57,14 @@
 				<div class="settleBtn" @click="payList">結帳</div>
 				<el-dialog title="訂單結帳" :visible.sync="dialogTableVisible" :before-close="handleClose">
 					<el-table :data="cart">
-						<el-table-column property="name" label="商品名稱" width="200"></el-table-column>
-						<el-table-column property="price" label="價錢" width="150"></el-table-column>
-						<el-table-column property="num" label="數量"></el-table-column>
+						<el-table-column prop="name" label="商品名稱" width="200"></el-table-column>
+						<el-table-column prop="price" label="價錢" width="150"></el-table-column>
+						<el-table-column prop="num" label="數量"></el-table-column>
 					</el-table>
 					<div>總金額 :<span> NT$ {{countList}}</span></div>
 					<div slot="footer" class="dialog-footer">
 						<el-button @click="handleCancel">取 消</el-button>
-						<el-button type="primary" @click="handleConfirm">確 定</el-button>
+						<el-button type="primary" @click="payDialog(list)">確 定</el-button>
 					</div>
 				</el-dialog>
 			</div>
@@ -72,7 +72,7 @@
 	</div>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
 	data () {
@@ -99,6 +99,8 @@ export default {
 		...mapGetters({list: 'basket'})
 	},
 	methods: {
+		...mapActions(['addItemToOrder']),
+		...mapMutations(['ADD_ITEM_TO_ORDER']),
 		removeId (index) {
 			this.list.splice(index, 1)
 			this.centerDialogVisible = false
@@ -112,7 +114,7 @@ export default {
 				}
 			}
 			if (this.cart.length === 0) {
-				this.$alert('您的沒有選擇任何商品結帳', {
+				this.$alert('您沒有選擇任何商品結帳', {
 					confirmButtonText: '確定'
 				})
 				this.dialogTableVisible = false
@@ -133,6 +135,10 @@ export default {
 				.catch(_ => {
 				})
 		},
+		payDialog (list) {
+			this.addItemToOrder(list)
+			this.dialogTableVisible = false
+		},
 		handleConfirm () {
 			this.$message({
 				type: 'success',
@@ -143,7 +149,9 @@ export default {
 			for (let k = 0; k < this.list.length; k++) {
 				this.list[k].checked = false
 			}
+			console.log(this.cart)
 		}
+
 	}
 }
 

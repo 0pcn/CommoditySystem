@@ -6,9 +6,16 @@ const basket = {
 	},
 	mutations: {
 		ADD_PRODUCT_TO_BASKET (state, product) {
-			state.basket.push(product)
-			Message.success('新增成功！')
-			console.log(state.basket)
+			const cartItem = state.basket.find(item => item.id === product.id)
+			if (cartItem) {
+				cartItem.num++
+				Message.success('商品已加入購物車！')
+				console.log(state.basket)
+			} else {
+				state.basket.push(product)
+				Message.success('商品已加入購物車！')
+				console.log(state.basket)
+			}
 		}
 	},
 	actions: {

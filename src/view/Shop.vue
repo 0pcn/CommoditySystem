@@ -63,7 +63,7 @@ export default {
 			// 用於保存每件商品的對象
 			goodItem: {},
 			// 用於保存用户添加到購物車的商品數组
-			buyLists: []
+			// buyLists: []
 		}
 	},
 	methods: {
