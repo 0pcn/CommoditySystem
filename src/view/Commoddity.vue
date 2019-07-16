@@ -135,7 +135,7 @@ export default {
 				.catch(_ => {
 				})
 		},
-		payDialog (list) {
+		payDialog (list) { // 指定開啟、關閉dialog
 			this.addItemToOrder(list)
 			this.dialogTableVisible = false
 		},
@@ -151,7 +151,6 @@ export default {
 			}
 			console.log(this.cart)
 		}
-
 	}
 }
 

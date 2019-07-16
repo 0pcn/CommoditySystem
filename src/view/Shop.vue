@@ -4,8 +4,6 @@
 			<el-card :body-style="{ padding: '0px' }" class="el-card"
 			         v-for="(product,index) in productList" :key="index">
 				<div class="pro">
-					<img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-					     class="image">
 					<div class="proInfo">
 						<div class="proName">{{product.name}}</div>
 						<div class="proPrice">NT$ {{product.price * product.num}}</div>
@@ -25,13 +23,14 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import { product_list } from '../api/api'
 
 export default {
 	data () {
 		return {
 			// 商品列表
 			productList: [
-				{
+				/*{
 					id: 1,
 					name: '皮夾',
 					price: 400,
@@ -58,13 +57,16 @@ export default {
 					price: 100,
 					num: 1,
 					addNums: 0
-				}
+				}*/
 			],
 			// 用於保存每件商品的對象
 			goodItem: {},
 			// 用於保存用户添加到購物車的商品數组
 			// buyLists: []
 		}
+	},
+	created () {
+		this.getProductList()
 	},
 	methods: {
 		...mapActions(['addProductToBasket']),
@@ -85,9 +87,14 @@ export default {
 				message: '商品已成功加入購物車',
 				type: 'success'
 			}) */
-			this.goodItem = {id: product.id, nums: product.addNums, checked: false}
-			//this.$store.dispatch('addProductToBasket', product)
-			this.addProductToBasket(this.goodItem)
+			//this.goodItem = {id: product.id, nums: product.addNums, checked: false}
+			this.addProductToBasket(product)
+		},
+		getProductList () {
+			product_list({}).then(res => {
+				this.productList = res.data.data
+				console.log({})
+			})
 		}
 	}
 }

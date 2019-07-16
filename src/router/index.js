@@ -12,7 +12,7 @@ export default new Router({
 	mode: 'history',
 	routes: [
 		{
-			path: '/',
+			path: '/Home',
 			name: 'Home',
 			component: Home,
 			meta: {title: 'Home', requiresAuth: true},
