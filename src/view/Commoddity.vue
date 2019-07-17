@@ -10,26 +10,26 @@
 			</el-alert>
 			<h4 v-show="list.length">購物車商品清單</h4>
 			<el-table :data=" list " style="width: 100%;" v-show="list.length">
-				<el-table-column label="選擇" width="100">
+				<!--<el-table-column label="選擇" width="100">
 					<template slot-scope="scope">
 						<el-checkbox v-model="scope.row.checked"></el-checkbox>
 					</template>
-				</el-table-column>
-				<el-table-column prop="name" label="商品名稱" width="180">
+				</el-table-column>-->
+				<el-table-column prop="product_name" label="商品名稱" width="180">
 				</el-table-column>
 				<el-table-column prop="price" label="單價" width="180">
 					<template slot-scope="scope">
-						<div>$ {{scope.row.price}}</div>
+						<div>$ {{scope.row.product_price}}</div>
 					</template>
 				</el-table-column>
 				<el-table-column label="數量" width="380">
 					<template slot-scope="scope">
-						<el-input-number v-model="scope.row.num" :min="1" :max="scope.row.number"></el-input-number>
+						<div>{{scope.row.quantity}}</div>
 					</template>
 				</el-table-column>
 				<el-table-column label="總計">
 					<template slot-scope="scope">
-						<div>$ {{scope.row.price*scope.row.num}}</div>
+						<div>$ {{scope.row.product_price * scope.row.quantity}}</div>
 					</template>
 				</el-table-column>
 				<el-table-column label="操作">
@@ -53,15 +53,15 @@
 		<el-divider></el-divider>
 		<el-card v-if="list.length!==0">
 			<div class="carFooter">
-				<div>總金額 :<span> NT$ {{countList}}</span></div>
-				<div class="settleBtn" @click="payList">結帳</div>
+				<div>總金額 :<span> NT$ {{total}}</span></div>
+				<div class="settleBtn" @click="payList()">結帳</div>
 				<el-dialog title="訂單結帳" :visible.sync="dialogTableVisible" :before-close="handleClose">
-					<el-table :data="cart">
-						<el-table-column prop="name" label="商品名稱" width="200"></el-table-column>
-						<el-table-column prop="price" label="價錢" width="150"></el-table-column>
-						<el-table-column prop="num" label="數量"></el-table-column>
+					<el-table :data="list">
+						<el-table-column prop="product_name" label="商品名稱" width="200"></el-table-column>
+						<el-table-column prop="product_price" label="價錢" width="150"></el-table-column>
+						<el-table-column prop="quantity" label="數量"></el-table-column>
 					</el-table>
-					<div>總金額 :<span> NT$ {{countList}}</span></div>
+					<div>總金額 :<span> NT$ {{total}}</span></div>
 					<div slot="footer" class="dialog-footer">
 						<el-button @click="handleCancel">取 消</el-button>
 						<el-button type="primary" @click="payDialog(list)">確 定</el-button>
@@ -73,43 +73,56 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import { cart_list, cart_total, cart_delete, cart_buy } from '../api/api'
 
 export default {
+	inject: ['reload'],
 	data () {
 		return {
 			cart: [],
+			list: [],
 			count: 0,
+			total: 0,
 			checked: false,
 			centerDialogVisible: false,
 			dialogTableVisible: false
 		}
+	},
+	mounted () {
+		this.getCartList()
+		this.getCartTotal()
 	},
 	computed: {
 		countList: function () {
 			var totalMoney = 0
 			for (let i = 0; i < this.list.length; i++) {
 				if (this.list[i].checked === true) {
-					totalMoney += this.list[i].price * this.list[i].num
+					totalMoney += this.list[i].price * this.list[i].quantity
 				}
 			}
 			this.count = totalMoney
 			return this.count
 		},
-		...mapState({list: 'basket'}),
-		...mapGetters({list: 'basket'})
+		...mapState(['basket']),
+		...mapGetters(['basket'])
 	},
 	methods: {
 		...mapActions(['addItemToOrder']),
 		...mapMutations(['ADD_ITEM_TO_ORDER']),
-		removeId (index) {
-			this.list.splice(index, 1)
-			this.centerDialogVisible = false
+		removeId (row) {
+			let id = {id: row.id}
+			cart_delete(id).then(res => {
+				this.centerDialogVisible = false
+				console.log(res.data)
+				this.reload()
+			})
+			// this.list.splice(index, 1)
 		},
 		payList () {
-			for (let i = 0; i < this.list.length; i++) {
+			/* for (let i = 0; i < this.list.length; i++) {
 				if (this.list[i].checked === true) {
 					this.dialogTableVisible = true
-					this.item = {name: this.list[i].name, num: this.list[i].num, price: this.list[i].price}
+					this.item = {name: this.list[i].name, quantity: this.list[i].quantity, price: this.list[i].price}
 					this.cart.push(this.item)
 				}
 			}
@@ -118,7 +131,8 @@ export default {
 					confirmButtonText: '確定'
 				})
 				this.dialogTableVisible = false
-			}
+			} */
+			this.dialogTableVisible = true
 		},
 		handleCancel () {
 			this.dialogTableVisible = false
@@ -135,11 +149,14 @@ export default {
 				.catch(_ => {
 				})
 		},
-		payDialog (list) { // 指定開啟、關閉dialog
-			this.addItemToOrder(list)
+		payDialog () { // (vuex)指定開啟、關閉的dialog
+			cart_buy({}).then(res => {
+				console.log(res.data)
+				this.reload()
+			})
 			this.dialogTableVisible = false
 		},
-		handleConfirm () {
+		/* handleConfirm () {
 			this.$message({
 				type: 'success',
 				message: `結帳成功,訂單已成立`
@@ -150,6 +167,20 @@ export default {
 				this.list[k].checked = false
 			}
 			console.log(this.cart)
+		} */
+		getCartList () {
+			cart_list({}).then(res => {
+				Object.keys(sessionStorage)
+				this.list = res.data.data
+				console.log(res.data)
+			})
+		},
+		getCartTotal () {
+			let total = {Total_Amount: this.total}
+			cart_total(total).then(res => {
+				this.total = res.data.Total_Amount
+				console.log(res.data)
+			})
 		}
 	}
 }

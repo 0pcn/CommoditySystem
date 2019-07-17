@@ -4,15 +4,17 @@
 			<el-card :body-style="{ padding: '0px' }" class="el-card"
 			         v-for="(product,index) in productList" :key="index">
 				<div class="pro">
+					<img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+					     class="image">
 					<div class="proInfo">
 						<div class="proName">{{product.name}}</div>
-						<div class="proPrice">NT$ {{product.price * product.num}}</div>
+						<div class="proPrice">NT$ {{product.price * product.quantity}}</div>
 					</div>
 					<div>
-						<el-input-number v-model="product.num" :min="1" class="countnum"></el-input-number>
+						<el-input-number v-model="product.quantity" :min="1" class="countnum"></el-input-number>
 					</div>
 					<div class="addcart">
-						<button class="addcartBtn" @click="addProductToBasket(product)">加入購物車</button>
+						<button class="addcartBtn" @click="addToCar(product)">加入購物車</button>
 					</div>
 				</div>
 			</el-card>
@@ -23,42 +25,14 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import { product_list } from '../api/api'
+import { product_list, add_to_cart, cart_list } from '../api/api'
 
 export default {
+	inject: ['reload'],
 	data () {
 		return {
 			// 商品列表
-			productList: [
-				/*{
-					id: 1,
-					name: '皮夾',
-					price: 400,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 2,
-					name: '手環',
-					price: 200,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 3,
-					name: '戒指',
-					price: 800,
-					num: 1,
-					addNums: 0
-				},
-				{
-					id: 4,
-					name: '鞋子',
-					price: 100,
-					num: 1,
-					addNums: 0
-				}*/
-			],
+			productList: [],
 			// 用於保存每件商品的對象
 			goodItem: {},
 			// 用於保存用户添加到購物車的商品數组
@@ -67,12 +41,13 @@ export default {
 	},
 	created () {
 		this.getProductList()
+		this.getCartList()
 	},
 	methods: {
 		...mapActions(['addProductToBasket']),
 		...mapMutations(['ADD_PRODUCT_TO_BASKET']),
-		addToCar (product) {
-			/* if (product.addNums === product.num) return
+		/* addToCar (product) {
+			/!* if (product.addNums === product.num) return
 			product.addNums = product.num
 			this.goodItem = {id: product.id, nums: product.addNums}
 			// 1、用戶未添加過該商品，則直接向數组中push
@@ -86,14 +61,39 @@ export default {
 			this.$message({
 				message: '商品已成功加入購物車',
 				type: 'success'
-			}) */
+			}) *!/
 			//this.goodItem = {id: product.id, nums: product.addNums, checked: false}
 			this.addProductToBasket(product)
-		},
+		}, */
 		getProductList () {
-			product_list({}).then(res => {
+			const a = {user_uuid: sessionStorage.getItem('key')}
+			product_list(a).then(res => {
 				this.productList = res.data.data
-				console.log({})
+				for (let i = 0; i < this.productList.length; i++) {
+					this.$set(this.productList[i], 'quantity', 1)
+				}
+				console.log(res.data)
+			})
+		},
+		addToCar (product) {
+			let i = {product_id: product.id, quantity: product.quantity}
+			add_to_cart(i).then(res => {
+				this.item = res.data.message
+				console.log(res.data)
+				if (this.item === 'product is already in shoppingCart') {
+					this.$message.warning('商品已存在！')
+				} else {
+					this.$message.success('商品已加入購物車！')
+				}
+				console.log(this.list)
+				this.reload()
+			})
+		},
+		getCartList () {
+			cart_list({}).then(res => {
+				Object.keys(sessionStorage)
+				this.list = res.data.data
+				console.log(res.data)
 			})
 		}
 	}
@@ -136,13 +136,13 @@ export default {
 
 .proName {
 
-	width: 130px;
+	width: 110px;
 	height: 50px;
 }
 
 .proPrice {
 	border-left: solid 1px #C8DCDE;
-	width: 100px;
+	width: 130px;
 	padding-left: 10px;
 }
 

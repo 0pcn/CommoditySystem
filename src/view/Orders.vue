@@ -5,7 +5,6 @@
 			<el-input v-model="search"
 			          placeholder="請輸入搜索内容">
 			</el-input>
-			{{productList}}
 		</div>
 		<div class="dormitoryData">
 			<el-table
@@ -38,6 +37,21 @@
 								<el-table-column property="total_amount" label="總金額"></el-table-column>
 							</el-table>
 						</el-dialog>
+						<el-button
+							size="mini"
+							@click="centerDialogVisible = true">取消訂單
+						</el-button>
+						<el-dialog
+							title="提示"
+							:visible.sync="centerDialogVisible"
+							width="30%"
+							center>
+							<span>確定要取消這個訂單嗎？</span>
+							<span slot="footer" class="dialog-footer">
+            <el-button @click="centerDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="cancle(scope.row)">確 定</el-button>
+          </span>
+						</el-dialog>
 					</template>
 				</el-table-column>
 				<!--</el-table-column>
@@ -59,16 +73,25 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { orders, order_detail, cancle_order } from '../api/api'
 
 export default {
+	inject: ['reload'],
 	data () {
 		return {
-			search: ''
+			search: '',
+			productList: [],
+			detailData: [],
+			dialogTableVisible: false,
+			centerDialogVisible: false
 		}
 	},
+	created () {
+		this.getList()
+	},
 	computed: {
-		...mapState({productList: 'buyList'}),
-		...mapGetters({productList: 'buyList'}),
+		/*...mapState([ 'buyList']),
+		...mapGetters(['buyList']),*/
 		// 模糊搜索
 		tables () {
 			const search = this.search
@@ -92,6 +115,29 @@ export default {
 			}
 			console.log(this.productList)
 			return this.productList
+		}
+	},
+	methods: {
+		getList () {
+			orders({}).then(res => {
+				this.productList = res.data.data
+				console.log(res.data)
+			})
+		},
+		getDetail (row) {
+			this.dialogTableVisible = true
+			let id = {order_id: row.id}
+			order_detail(id).then(res => {
+				this.detailData = res.data.data
+				console.log(res.data)
+			})
+		},
+		cancle (row) {
+			let id = {order_id: row.id}
+			cancle_order(id).then(res => {
+				console.log(res.data.data)
+				this.reload()
+			})
 		}
 	}
 }

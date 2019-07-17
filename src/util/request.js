@@ -22,7 +22,6 @@ service.interceptors.request.use(config => {
 	console.log(error)
 	Promise.reject(error)
 })
-
 service.interceptors.response.use(response => {
 	/*  const res = response.data !== '' ? response.data : '';
 	  if(res.error==null){

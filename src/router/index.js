@@ -31,9 +31,9 @@ export default new Router({
 				},
 				{
 					path: '/Orders',
-					name: '結帳',
+					name: '訂單管理',
 					component: Orders,
-					meta: {title: '結帳', requiresAuth: true}
+					meta: {title: '訂單管理', requiresAuth: true}
 				}
 			]
 		},
