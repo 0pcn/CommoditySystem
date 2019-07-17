@@ -9,7 +9,7 @@
 		<div class="dormitoryData">
 			<el-table
 				ref="dormitoryTable"
-				:data="productList"
+				:data="tables"
 				tooltip-effect="dark"
 				stripe
 				style="width: 100%">
