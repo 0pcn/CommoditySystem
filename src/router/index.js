@@ -33,7 +33,7 @@ export default new Router({
 					path: '/Orders',
 					name: '訂單管理',
 					component: Orders,
-					meta: {title: '訂單管理', requiresAuth: true}
+					meta: {title: '訂單管理', requiresAuth: true, keepalive: true}
 				}
 			]
 		},
@@ -43,5 +43,16 @@ export default new Router({
 			component: Login,
 			meta: {requiresAuth: false}
 		}
-	]
+	],
+	// keep-alive 返回緩存頁面後儲存瀏覽位置
+	scrollBehavior (to, from, saveposition) {
+		if (saveposition) {
+			return saveposition
+		} else {
+			if (from.meta.keepAlive) {
+				from.meta.savedPosition = document.body.scrollTop
+			}
+			return {x: 0, y: to.meta.savedPosition || 0}
+		}
+	}
 })

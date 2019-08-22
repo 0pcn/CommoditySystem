@@ -29,6 +29,18 @@
 						<router-link :to="item.path" v-if="item.meta.title">{{ item.meta.title }}</router-link>
 					</el-breadcrumb-item>
 				</el-breadcrumb>
+				<el-button @click="dialogVisible = true" type="primary" round class="logout">登出</el-button>
+				<el-dialog
+					title="提示"
+					:visible.sync="dialogVisible"
+					width="30%"
+					:before-close="handleClose">
+					<span>確定要登出嗎？</span>
+					<span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="logout">確 定</el-button>
+  </span>
+				</el-dialog>
 			</el-header>
 			<el-main class="el-main">
 				<router-view></router-view>
@@ -41,22 +53,24 @@
 export default {
 	data () {
 		return {
-			levelList: []
+			levelList: [],
+			dialogVisible: false
 		}
 	},
 	created () {
 		this.getBreadcrumb()
 	},
 	methods: {
-		handleOpen (key, keyPath) {
-			console.log(key, keyPath)
-		},
 		handleClose (key, keyPath) {
 			console.log(key, keyPath)
 		},
 		getBreadcrumb () {
 			let matched = this.$route.matched.filter(item => item.name)
 			this.levelList = matched
+		},
+		logout () {
+			this.dialogVisible = true
+			this.$router.push('/')
 		}
 	},
 	watch: {
@@ -105,5 +119,10 @@ html, body {
 
 .el-main {
 	padding: 0px 20px;
+}
+.logout{
+	position: absolute;
+	right: 20px;
+	top: 10px;
 }
 </style>

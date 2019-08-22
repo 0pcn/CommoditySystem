@@ -1,14 +1,13 @@
 <template>
-	<div class="dormitory">
+	<div class="dormitory" ref="table">
 		<div class="searchWord">
 			<div style="display: inline-block"> 搜索：</div>
 			<el-input v-model="search"
 			          placeholder="請輸入搜索内容">
 			</el-input>
 		</div>
-		<div class="dormitoryData">
+		<div class="data">
 			<el-table
-				ref="dormitoryTable"
 				:data="tables"
 				tooltip-effect="dark"
 				stripe
@@ -29,7 +28,12 @@
 							size="mini"
 							@click="getDetail(scope.row)">Detail
 						</el-button>
-						<el-dialog title="訂單明細" :visible.sync="dialogTableVisible">
+						<el-button
+							size="mini"
+							@click="cancle(scope.row)">取消訂單
+						</el-button>
+
+						<el-dialog title="訂單明細" :visible.sync="dialogTableVisible" :append-to-body="true">
 							<el-table :data="detailData">
 								<el-table-column property="product_name" label="商品名稱"></el-table-column>
 								<el-table-column property="price" label="價錢" width="150"></el-table-column>
@@ -37,19 +41,16 @@
 								<el-table-column property="total_amount" label="總金額"></el-table-column>
 							</el-table>
 						</el-dialog>
-						<el-button
-							size="mini"
-							@click="centerDialogVisible = true">取消訂單
-						</el-button>
 						<el-dialog
 							title="提示"
 							:visible.sync="centerDialogVisible"
+							:append-to-body="true"
 							width="30%"
 							center>
 							<span>確定要取消這個訂單嗎？</span>
 							<span slot="footer" class="dialog-footer">
             <el-button @click="centerDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="cancle(scope.row)">確 定</el-button>
+            <el-button type="primary" @click="handleconfirm">確 定</el-button>
           </span>
 						</el-dialog>
 					</template>
@@ -83,12 +84,17 @@ export default {
 			productList: [],
 			detailData: [],
 			dialogTableVisible: false,
-			centerDialogVisible: false
+			centerDialogVisible: false,
+			id: {},
+			scroll: 0
 		}
 	},
 	created () {
 		this.getList()
 	},
+	/*mounted () {
+		window.addEventListener('scroll', this.handlescroll, true)
+	},*/
 	computed: {
 		/*...mapState([ 'buyList']),
 		...mapGetters(['buyList']),*/
@@ -113,7 +119,6 @@ export default {
 					})
 				})
 			}
-			console.log(this.productList)
 			return this.productList
 		}
 	},
@@ -121,24 +126,31 @@ export default {
 		getList () {
 			orders({}).then(res => {
 				this.productList = res.data.data
-				console.log(res.data)
+				console.log(this.productList)
 			})
 		},
 		getDetail (row) {
 			this.dialogTableVisible = true
-			let id = {order_id: row.id}
-			order_detail(id).then(res => {
+			this.id = {order_id: row.id}
+			order_detail(this.id).then(res => {
 				this.detailData = res.data.data
-				console.log(res.data)
+				console.log(this.detailData)
 			})
 		},
 		cancle (row) {
-			let id = {order_id: row.id}
-			cancle_order(id).then(res => {
-				console.log(res.data.data)
+			this.centerDialogVisible = true
+			this.id = {order_id: row.id}
+		},
+		handleconfirm () {
+			cancle_order(this.id).then(res => {
+				console.log(res.data)
 				this.reload()
 			})
+			this.centerDialogVisible = false
 		}
+	},
+		activated () {
+		this.getList()
 	}
 }
 </script>

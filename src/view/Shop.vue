@@ -85,7 +85,6 @@ export default {
 				} else {
 					this.$message.success('商品已加入購物車！')
 				}
-				console.log(this.list)
 				this.reload()
 			})
 		},
