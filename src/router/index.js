@@ -46,13 +46,9 @@ export default new Router({
 	],
 	// keep-alive 返回緩存頁面後儲存瀏覽位置
 	scrollBehavior (to, from, saveposition) {
-		if (saveposition) {
+		if (saveposition && to.meta.saveposition) {
 			return saveposition
-		} else {
-			if (from.meta.keepAlive) {
-				from.meta.savedPosition = document.body.scrollTop
-			}
-			return {x: 0, y: to.meta.savedPosition || 0}
 		}
+		return {x: 0, y: 0}
 	}
 })

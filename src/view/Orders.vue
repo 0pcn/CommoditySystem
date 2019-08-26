@@ -92,9 +92,6 @@ export default {
 	created () {
 		this.getList()
 	},
-	/*mounted () {
-		window.addEventListener('scroll', this.handlescroll, true)
-	},*/
 	computed: {
 		/*...mapState([ 'buyList']),
 		...mapGetters(['buyList']),*/

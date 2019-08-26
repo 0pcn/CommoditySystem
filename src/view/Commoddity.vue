@@ -155,6 +155,7 @@ export default {
 				this.reload()
 			})
 			this.dialogTableVisible = false
+			this.$router.push('/Orders')
 		},
 		/* handleConfirm () {
 			this.$message({
